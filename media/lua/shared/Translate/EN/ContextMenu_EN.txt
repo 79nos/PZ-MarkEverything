@@ -1,0 +1,11 @@
+UI_EN = {
+	ContextMenu_PZMarkEverything_MarkOption = "Mark options",
+	ContextMenu_PZMarkEverything_MarkOption_MarkItem = "Mark item",
+	ContextMenu_PZMarkEverything_MarkOption_UnmarkItem = "Unmark item",
+	ContextMenu_PZMarkEverything_MarkOption_MarkAllItem = "Mark all items",
+	ContextMenu_PZMarkEverything_MarkOption_UnmarkAllItem = "Unmark all items",
+	PZMarkEverything_ItemMark_Blue = "Blue",
+	PZMarkEverything_ItemMark_Green = "Green",
+	PZMarkEverything_ItemMark_Red = "Red",
+	PZMarkEverything_ItemMark_Yellow = "Yellow",
+}
