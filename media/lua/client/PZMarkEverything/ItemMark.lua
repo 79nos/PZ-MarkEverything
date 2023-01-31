@@ -237,7 +237,7 @@ function ISInventoryPane:renderdetails(doDragged)
 end
 
 local function onReloading(fileName)
-	if fileName ~= "client/PZMarkEverything_ItemMark.lua" then
+	if fileName ~= "client/PZMarkEverything/ItemMark.lua" then
 		return
 	end
 

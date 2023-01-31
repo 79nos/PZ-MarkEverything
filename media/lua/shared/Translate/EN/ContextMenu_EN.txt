@@ -9,10 +9,12 @@ ContextMenu_EN = {
 	PZMarkEverything_ItemMark_Red = "Red",
 	PZMarkEverything_ItemMark_Yellow = "Yellow",
 
-	ContextMenu_PZMarkEverything_MarkOption_MarkContainer = "Mark Container",
-	ContextMenu_PZMarkEverything_MarkOption_UnmarkContainer = "Unmark Container",
+	ContextMenu_PZMarkEverything_ContainerOp_Mark = "Mark Container",
+	ContextMenu_PZMarkEverything_ContainerOp_Unmark = "Unmark Container",
 	ContextMenu_PZMarkEverything_ContainerMark_Blue = "Blue",
 	ContextMenu_PZMarkEverything_ContainerMark_Green = "Green",
 	ContextMenu_PZMarkEverything_ContainerMark_Red = "Red",
 	ContextMenu_PZMarkEverything_ContainerMark_Yellow = "Yellow",
+
+	ContextMenu_PZMarkEverything_ContainerOp_TakeDuplicateItems = "Take duplicate items",
 }

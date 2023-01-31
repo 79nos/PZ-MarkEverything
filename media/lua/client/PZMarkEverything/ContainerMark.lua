@@ -135,7 +135,6 @@ local newInventoryPageAddContainerButton = function(self, container, texture, na
 
     return button;
 end
-
 function ISInventoryPage:addContainerButton(container, texture, name, tooltip)
     return newInventoryPageAddContainerButton(self, container, texture, name, tooltip)
 end
@@ -163,95 +162,37 @@ function ISButton:render()
     newISButtonRender(self)
 end
 
-local function showMarkContextMenu(self)
-    local page = self
-    local context = ISContextMenu.get(page.player, getMouseX(), getMouseY())
-
-    local colorSubMenu = ISContextMenu:getNew(context)
-    context:addSubMenu(context:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_MarkContainer", nil, nil)),
-        colorSubMenu)
-    for color, cfg in pairs(ContainerMarkConfig) do
-        colorSubMenu:addOption(getText(cfg.text), { self = self, container = self.inventory, color = color, }, markOption)
+local function buildMarkContainerOp(player, context, container, onCharacter)
+    if onCharacter then
+        return
     end
-    context:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_UnmarkContainer"),
-        { self = self, container = self.inventory },
-        unmarkOption)
 
-    context:setVisible(true)
-
-    if context.numOptions > 1 and JoypadState.players[page.player + 1] then
-        context.origin = page
-        context.mouseOver = 1
-        setJoypadFocus(page.player, context)
-    end
-end
-
-local originalInventoryPageCreateChildren = ISInventoryPage.createChildren
-local newInventoryPageCreateChildren = function(self)
-    originalInventoryPageCreateChildren(self)
-
-    if not self.onCharacter then
-        local titleBarHeight = self:titleBarHeight()
-        local lootButtonHeight = titleBarHeight
-        local textWid = getTextManager():MeasureStringX(UIFont.Small, getText("IGUI_invpage_PZMarkEverything_Mark"))
-
-        local markBtn = ISButton:new(0, 0, textWid, lootButtonHeight, getText("IGUI_invpage_PZMarkEverything_Mark"), self
-            , showMarkContextMenu)
-        markBtn:initialise();
-        markBtn.borderColor.a = 0.0;
-        markBtn.backgroundColor.a = 0.0;
-        markBtn.backgroundColorMouseOver.a = 0.7;
-        markBtn.textColor = { r = 203 / 255, g = 219 / 255, b = 252 / 255, a = 1 }
-        markBtn:setVisible(false);
-        self:addChild(markBtn);
-
-        self.PZMarkEverything = {
-            containerMarkBtn = markBtn
-        }
-    end
-end
-function ISInventoryPage:createChildren()
-    newInventoryPageCreateChildren(self)
-end
-
-local originalInventoryPagePrerender = ISInventoryPage.prerender
-local newInventoryPagePrerender = function(self)
-    originalInventoryPagePrerender(self)
-
-    if not self.onCharacter and self.PZMarkEverything then
-        if not self.inventory or not canMark(self.inventory) then
-            self.PZMarkEverything.containerMarkBtn:setVisible(false)
-        else
-            local weightWid = getTextManager():MeasureStringX(UIFont.Small, "99.99 / 99")
-            weightWid = math.max(90, weightWid + 10)
-
-            local titleWid = 0
-            if self.title then
-                titleWid = getTextManager():MeasureStringX(UIFont.Small, self.title)
-            end
-
-            self.PZMarkEverything.containerMarkBtn:setX(self.width - 20 - weightWid - titleWid -
-                self.PZMarkEverything.containerMarkBtn:getWidth() - 2)
-
-            self.PZMarkEverything.containerMarkBtn:setVisible(true)
+    if canMark(container) then
+        local colorSubMenu = ISContextMenu:getNew(context)
+        context:addSubMenu(context:addOption(getText("ContextMenu_PZMarkEverything_ContainerOp_Mark", nil, nil))
+            ,
+            colorSubMenu)
+        for color, cfg in pairs(ContainerMarkConfig) do
+            colorSubMenu:addOption(getText(cfg.text), { container = container, color = color, },
+                markOption)
         end
+        context:addOption(getText("ContextMenu_PZMarkEverything_ContainerOp_Unmark"),
+            { container = container },
+            unmarkOption)
     end
+end
 
-end
-function ISInventoryPage:prerender()
-    newInventoryPagePrerender(self)
-end
+Events["PZMarkEverything.OnFillContainerOperationContextMenu"].Add(buildMarkContainerOp)
+
 
 local function onReloading(fileName)
-    if fileName ~= "client/PZMarkEverything_ContainerMark.lua" then
+    if fileName ~= "client/PZMarkEverything/ContainerMark.lua" then
         return
     end
 
     print("reloading PZMarkEverything_ContainerMark.lua, so set old hooks to empty function")
 
     newInventoryPageAddContainerButton = orignalInventoryPageAddContainerButton
-    newInventoryPageCreateChildren = originalInventoryPageCreateChildren
-    newInventoryPagePrerender = originalInventoryPagePrerender
     newISButtonRender = orignalISButtonRender
 end
 

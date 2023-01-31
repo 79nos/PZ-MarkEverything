@@ -1,3 +1,3 @@
 UI_EN = {
-    IGUI_invpage_PZMarkEverything_Mark = "Mark",
+    IGUI_invpage_PZMarkEverything_Operation = "Operation",
 }

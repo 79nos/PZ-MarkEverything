@@ -10,10 +10,12 @@ ContextMenu_CN = {
 	ContextMenu_PZMarkEverything_ItemMark_Red = "红色",
 	ContextMenu_PZMarkEverything_ItemMark_Yellow = "黄色",
 	
-	ContextMenu_PZMarkEverything_MarkOption_MarkContainer = "标记容器",
-	ContextMenu_PZMarkEverything_MarkOption_UnmarkContainer = "取消容器标记",
+	ContextMenu_PZMarkEverything_ContainerOp_Mark = "标记容器",
+	ContextMenu_PZMarkEverything_ContainerOp_Unmark = "取消容器标记",
 	ContextMenu_PZMarkEverything_ContainerMark_Blue = "蓝色",
 	ContextMenu_PZMarkEverything_ContainerMark_Green = "绿色",
 	ContextMenu_PZMarkEverything_ContainerMark_Red = "红色",
 	ContextMenu_PZMarkEverything_ContainerMark_Yellow = "黄色",
+
+	ContextMenu_PZMarkEverything_ContainerOp_TakeDuplicateItems = "拿走重复物品",
 }
