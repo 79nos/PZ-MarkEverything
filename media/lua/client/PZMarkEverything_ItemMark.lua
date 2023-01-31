@@ -26,7 +26,7 @@ PZMarkEverything.itemMarkConfig = {
 -- * ModData functions
 -- *****************************************************************************
 
-PZMarkEverything.getMarkedList = function()
+local function getMarkedList()
 	local modData = getPlayer():getModData()
 	if not modData.PZMarkEverything then
 		modData.PZMarkEverything = {}
@@ -35,43 +35,30 @@ PZMarkEverything.getMarkedList = function()
 	return modData.PZMarkEverything.markedList
 end
 
-PZMarkEverything.markItem = function(args)
-	local markedList = PZMarkEverything.getMarkedList()
-	local mark = markedList[args.markID]
-
+local function mark(markID, color)
+	local markedList = getMarkedList()
+	local mark = markedList[markID]
 	if mark == nil then
 		mark = {}
-		markedList[args.markID] = mark
+		markedList[markID] = mark
 	end
 
-	mark.color = args.color
+	mark.color = color
 end
 
-PZMarkEverything.markAllItems = function(args)
-	for i, markID in ipairs(args.markIDs) do
-		PZMarkEverything.markItem({ markID = markID, color = args.color })
-	end
-end
-
-PZMarkEverything.unmarkItem = function(id)
-	local markedList = PZMarkEverything.getMarkedList()
-	local mark = markedList[id]
+local function unmark(markID)
+	local markedList = getMarkedList()
+	local mark = markedList[markID]
 
 	if mark == nil then
 		return
 	end
 
-	markedList[id] = nil
-end
-
-PZMarkEverything.unmarkAllItems = function(markIDs)
-	for i, markID in ipairs(markIDs) do
-		PZMarkEverything.unmarkItem(markID)
-	end
+	markedList[markID] = nil
 end
 
 -- 部分物品type相同，但实际内容不相同，则在type后增加与内容相关的标志数据将其区分开
-PZMarkEverything.getItemMarkID = function(item)
+local function getItemMarkID(item)
 	local type = item:getFullType()
 	if type == "Base.Disc_Retail" then
 		return type .. item:getMediaData():getIndex()
@@ -82,6 +69,36 @@ PZMarkEverything.getItemMarkID = function(item)
 	end
 
 	return type
+end
+
+local function markItemOption(args)
+	mark(getItemMarkID(args.item), args.color)
+
+	getPlayer():transmitModData()
+end
+
+local function markAllItemsOption(args)
+	for i, item in ipairs(args.items) do
+		local markID = getItemMarkID(item.items[1])
+
+		mark(markID, args.color)
+	end
+
+	getPlayer():transmitModData()
+end
+
+local function unmarkItemOption(item)
+	unmark(getItemMarkID(item))
+
+	getPlayer():transmitModData()
+end
+
+local function unmarkAllItemsOption(items)
+	for i, item in ipairs(items) do
+		unmark(getItemMarkID(item.items[1]))
+	end
+
+	getPlayer():transmitModData()
 end
 
 -- *****************************************************************************
@@ -98,37 +115,25 @@ PZMarkEverything.OnFillInventoryObjectContextMenu = function(player, contextMenu
 			item = item.items[1]
 		end
 
-		local markID = PZMarkEverything.getItemMarkID(item)
-
 		local colorSubMenu = ISContextMenu:getNew(subMenu)
 		subMenu:addSubMenu(subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_MarkItem", nil, nil)),
 			colorSubMenu)
 		for color, cfg in pairs(PZMarkEverything.itemMarkConfig) do
-			colorSubMenu:addOption(getText(cfg.text), { markID = markID, color = color, }, PZMarkEverything.markItem)
+			colorSubMenu:addOption(getText(cfg.text), { item = item, color = color, }, markItemOption)
 		end
 
-		subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_UnmarkItem"), markID, PZMarkEverything.unmarkItem)
+		subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_UnmarkItem"), item, unmarkItemOption)
 
 	else
-		local markIDs = {}
-		for i, v in ipairs(items) do
-			local item = v.items[1]
-			local markID = PZMarkEverything.getItemMarkID(item)
-
-			table.insert(markIDs, markID)
-
+		local colorSubMenu = ISContextMenu:getNew(subMenu)
+		subMenu:addSubMenu(subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_MarkAllItem", nil, nil)),
+			colorSubMenu)
+		for color, cfg in pairs(PZMarkEverything.itemMarkConfig) do
+			colorSubMenu:addOption(getText(cfg.text), { items = items, color = color, }, markAllItemsOption)
 		end
-		if #markIDs > 0 then
-			local colorSubMenu = ISContextMenu:getNew(subMenu)
-			subMenu:addSubMenu(subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_MarkAllItem", nil, nil)),
-				colorSubMenu)
-			for color, cfg in pairs(PZMarkEverything.itemMarkConfig) do
-				colorSubMenu:addOption(getText(cfg.text), { markIDs = markIDs, color = color, }, PZMarkEverything.markAllItems)
-			end
 
-			subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_UnmarkAllItem"), markIDs,
-				PZMarkEverything.unmarkAllItems)
-		end
+		subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_UnmarkAllItem"), items,
+			unmarkAllItemsOption)
 	end
 end
 Events.OnFillInventoryObjectContextMenu.Add(PZMarkEverything.OnFillInventoryObjectContextMenu)
@@ -141,7 +146,7 @@ PZMarkEverything.originalRenderdetails = ISInventoryPane.renderdetails
 PZMarkEverything.newRenderdetails = function(self, doDragged)
 	PZMarkEverything.originalRenderdetails(self, doDragged)
 
-	local markedList = PZMarkEverything.getMarkedList()
+	local markedList = getMarkedList()
 	local player = getSpecificPlayer(self.player)
 	local y = 0;
 	local alt = false;
@@ -188,7 +193,7 @@ PZMarkEverything.newRenderdetails = function(self, doDragged)
 					local texDY = 1
 					local texWH = math.min(self.itemHgt - 2, 32)
 					local auxDXY = math.ceil(20 * self.texScale)
-					local mark = markedList[PZMarkEverything.getItemMarkID(item)]
+					local mark = markedList[getItemMarkID(item)]
 
 					if mark ~= nil then
 						local cfg = PZMarkEverything.itemMarkConfig[mark.color]
