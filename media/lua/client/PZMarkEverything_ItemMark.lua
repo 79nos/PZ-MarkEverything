@@ -93,7 +93,11 @@ PZMarkEverything.OnFillInventoryObjectContextMenu = function(player, contextMenu
 	contextMenu:addSubMenu(contextMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption"), nil, nil), subMenu)
 
 	if #items == 1 then
-		local item = items[1].items[1]
+		local item = items[1]
+		if item.items then
+			item = item.items[1]
+		end
+
 		local markID = PZMarkEverything.getItemMarkID(item)
 
 		local colorSubMenu = ISContextMenu:getNew(subMenu)
@@ -133,9 +137,9 @@ Events.OnFillInventoryObjectContextMenu.Add(PZMarkEverything.OnFillInventoryObje
 -- * Main functions
 -- *****************************************************************************
 
-PZMarkEverything.original_render = ISInventoryPane.renderdetails
-function ISInventoryPane:renderdetails(doDragged)
-	PZMarkEverything.original_render(self, doDragged)
+PZMarkEverything.originalRenderdetails = ISInventoryPane.renderdetails
+PZMarkEverything.newRenderdetails = function(self, doDragged)
+	PZMarkEverything.originalRenderdetails(self, doDragged)
 
 	local markedList = PZMarkEverything.getMarkedList()
 	local player = getSpecificPlayer(self.player)
@@ -223,3 +227,21 @@ function ISInventoryPane:renderdetails(doDragged)
 		end
 	end
 end
+function ISInventoryPane:renderdetails(doDragged)
+	PZMarkEverything.newRenderdetails(self, doDragged)
+end
+
+local function onReloading(fileName)
+	if fileName ~= "client/PZMarkEverything_ItemMark.lua" then
+		return
+	end
+
+	print("reloading PZMarkEverything_ItemMark.lua, so set old hooks to empty function")
+
+	PZMarkEverything.newRenderdetails = PZMarkEverything.originalRenderdetails
+end
+
+if not Events.PZEasyDebugOnDebugReloadingLuaFile then
+	LuaEventManager.AddEvent("PZEasyDebugOnDebugReloadingLuaFile")
+end
+Events.PZEasyDebugOnDebugReloadingLuaFile.Add(onReloading)
