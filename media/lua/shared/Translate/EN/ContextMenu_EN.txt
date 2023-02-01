@@ -1,9 +1,11 @@
 ContextMenu_EN = {
-	ContextMenu_PZMarkEverything_MarkOption = "Mark options",
-	ContextMenu_PZMarkEverything_MarkOption_MarkItem = "Mark item",
-	ContextMenu_PZMarkEverything_MarkOption_UnmarkItem = "Unmark item",
-	ContextMenu_PZMarkEverything_MarkOption_MarkAllItem = "Mark all items",
-	ContextMenu_PZMarkEverything_MarkOption_UnmarkAllItem = "Unmark all items",
+	ContextMenu_PZMarkEverything_ItemOp = "Operations",
+	ContextMenu_PZMarkEverything_ItemOp_MarkItem = "Mark item",
+	ContextMenu_PZMarkEverything_ItemOp_UnmarkItem = "Unmark item",
+	ContextMenu_PZMarkEverything_ItemOp_MarkAllItem = "Mark all items",
+	ContextMenu_PZMarkEverything_ItemOp_UnmarkAllItem = "Unmark all items",
+	ContextMenu_PZMarkEverything_ItemOp_CollectSameItems = "Collect same items"
+
 	PZMarkEverything_ItemMark_Blue = "Blue",
 	PZMarkEverything_ItemMark_Green = "Green",
 	PZMarkEverything_ItemMark_Red = "Red",

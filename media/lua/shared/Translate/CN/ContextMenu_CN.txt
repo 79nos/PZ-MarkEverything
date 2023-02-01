@@ -1,10 +1,11 @@
 ContextMenu_CN = {
-	ContextMenu_PZMarkEverything_MarkOption = "标记管理",
-	ContextMenu_PZMarkEverything_MarkOption_MarkItem = "标记物品",
-	ContextMenu_PZMarkEverything_MarkOption_UnmarkItem = "取消物品标记",
-	ContextMenu_PZMarkEverything_MarkOption_MarkAllItem = "标记所有物品",
-	ContextMenu_PZMarkEverything_MarkOption_UnmarkAllItem = "取消所有物品标记",
-	
+	ContextMenu_PZMarkEverything_ItemOp = "整理",
+	ContextMenu_PZMarkEverything_ItemOp_MarkItem = "标记物品",
+	ContextMenu_PZMarkEverything_ItemOp_UnmarkItem = "取消物品标记",
+	ContextMenu_PZMarkEverything_ItemOp_MarkAllItem = "标记所有物品",
+	ContextMenu_PZMarkEverything_ItemOp_UnmarkAllItem = "取消所有物品标记",
+	ContextMenu_PZMarkEverything_ItemOp_CollectSameItems = "收集相同物品",
+
 	ContextMenu_PZMarkEverything_ItemMark_Blue = "蓝色",
 	ContextMenu_PZMarkEverything_ItemMark_Green = "绿色",
 	ContextMenu_PZMarkEverything_ItemMark_Red = "红色",

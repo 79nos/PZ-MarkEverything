@@ -105,38 +105,36 @@ end
 -- * Event trigger functions
 -- *****************************************************************************
 
-PZMarkEverything.OnFillInventoryObjectContextMenu = function(player, contextMenu, items)
-	local subMenu = ISContextMenu:getNew(contextMenu)
-	contextMenu:addSubMenu(contextMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption"), nil, nil), subMenu)
-
+local function buildMarkOptions(player, contextMenu, items)
 	if #items == 1 then
 		local item = items[1]
 		if item.items then
 			item = item.items[1]
 		end
 
-		local colorSubMenu = ISContextMenu:getNew(subMenu)
-		subMenu:addSubMenu(subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_MarkItem", nil, nil)),
+		local colorSubMenu = ISContextMenu:getNew(contextMenu)
+		contextMenu:addSubMenu(contextMenu:addOption(getText("ContextMenu_PZMarkEverything_ItemOp_MarkItem", nil, nil)),
 			colorSubMenu)
 		for color, cfg in pairs(PZMarkEverything.itemMarkConfig) do
 			colorSubMenu:addOption(getText(cfg.text), { item = item, color = color, }, markItemOption)
 		end
 
-		subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_UnmarkItem"), item, unmarkItemOption)
+		contextMenu:addOption(getText("ContextMenu_PZMarkEverything_ItemOp_UnmarkItem"), item, unmarkItemOption)
 
 	else
-		local colorSubMenu = ISContextMenu:getNew(subMenu)
-		subMenu:addSubMenu(subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_MarkAllItem", nil, nil)),
-			colorSubMenu)
+		local colorSubMenu = ISContextMenu:getNew(contextMenu)
+		contextMenu:addSubMenu(contextMenu:addOption(getText("ContextMenu_PZMarkEverything_ItemOp_MarkAllItem", nil, nil))
+			, colorSubMenu)
 		for color, cfg in pairs(PZMarkEverything.itemMarkConfig) do
 			colorSubMenu:addOption(getText(cfg.text), { items = items, color = color, }, markAllItemsOption)
 		end
 
-		subMenu:addOption(getText("ContextMenu_PZMarkEverything_MarkOption_UnmarkAllItem"), items,
+		contextMenu:addOption(getText("ContextMenu_PZMarkEverything_ItemOp_UnmarkAllItem"), items,
 			unmarkAllItemsOption)
 	end
 end
-Events.OnFillInventoryObjectContextMenu.Add(PZMarkEverything.OnFillInventoryObjectContextMenu)
+
+Events["PZMarkEverything.OnFillItemOperationContextMenu"].Add(buildMarkOptions)
 
 -- *****************************************************************************
 -- * Main functions
