@@ -79,7 +79,13 @@ end
 
 local function markAllItemsOption(args)
 	for i, item in ipairs(args.items) do
-		local markID = getItemMarkID(item.items[1])
+
+		local markID = ""
+		if item.items then
+			markID = getItemMarkID(item.items[1])
+		else
+			markID = getItemMarkID(item)
+		end
 
 		mark(markID, args.color)
 	end
@@ -95,7 +101,14 @@ end
 
 local function unmarkAllItemsOption(items)
 	for i, item in ipairs(items) do
-		unmark(getItemMarkID(item.items[1]))
+		local markID = ""
+		if item.items then
+			markID = getItemMarkID(item.items[1])
+		else
+			markID = getItemMarkID(item)
+		end
+
+		unmark(markID)
 	end
 
 	getPlayer():transmitModData()

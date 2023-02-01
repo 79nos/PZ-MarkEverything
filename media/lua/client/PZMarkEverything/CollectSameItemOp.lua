@@ -43,9 +43,14 @@ local function collectSameItem(args)
         targetContainer = item:getContainer();
     else
         for i, item in ipairs(items) do
-            selectedItemTypes[item.items[1]:getType()] = true;
+            local realItem = item
+            if item.items then
+                realItem = item.items[1]
+            end
 
-            local con = item.items[1]:getContainer();
+            selectedItemTypes[realItem:getType()] = true;
+
+            local con = realItem:getContainer();
 
             if targetContainer ~= nil and con ~= targetContainer then
                 return
